@@ -1,18 +1,15 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
+import React, { useState } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Logo from '../../images/logo.png';
 import Copyright from '../../components/copyright';
-import AppStyles from '../../AppStyles';
+import LoginForm from './login_form';
 
 
 const useStyles = makeStyles((theme) => ({
-
     loginContainer: {
         marginTop: theme.spacing(8),
         display: 'flex',
@@ -30,17 +27,14 @@ const useStyles = makeStyles((theme) => ({
     },
     form: {
         width: '100%',
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-        color: "#fff"
-    },
+    }
 }));
 
 export default function SignIn() {
-  const classes = useStyles();
+    const classes = useStyles();
+    const [email, setEmail] = useState(undefined);
 
-  return (
+    return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.loginContainer}>
@@ -48,28 +42,8 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Admin
                 </Typography>
-                <form className={classes.form} noValidate>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                    />
 
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}>
-                        Enviar Código
-                    </Button>
-                </form>
+                <LoginForm />
             </div>
 
             <Box mt={8}>
