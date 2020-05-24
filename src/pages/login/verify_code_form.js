@@ -22,11 +22,19 @@ const useStyles = makeStyles((theme) => ({
 export default function VerifyCodeForm({ email, onCodeSent, onChangeEmail }) {
     const classes = useStyles();
     const [code, setCode] = useState("");
+    const [codeError, setCodeError] = useState("");
 
     const handleSubmit = async (evt) => {
         evt.preventDefault();
-        // TODO login
-        alert(`Logar ${code}`)
+
+        const formatedCode = code.trim();
+        if (formatedCode != "") {
+            // TODO login
+            setCodeError("");
+            alert(`Logar ${code}`)
+        } else {
+            setCodeError("Codigo e obrigatorio.")
+        }
     }
 
     const resendCode = async () => {
@@ -38,6 +46,7 @@ export default function VerifyCodeForm({ email, onCodeSent, onChangeEmail }) {
         <div>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <TextField
+                    error={codeError != ""}
                     variant="outlined"
                     margin="normal"
                     required
@@ -47,6 +56,7 @@ export default function VerifyCodeForm({ email, onCodeSent, onChangeEmail }) {
                     name="text"
                     value={code}
                     onChange={e => setCode(e.target.value)}
+                    helperText={codeError}
                     autoFocus
                 />
 

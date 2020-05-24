@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import Validator from '../../validator';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -14,16 +15,29 @@ const useStyles = makeStyles((theme) => ({
 export default function SendCodeForm({ onCodeSent }) {
     const classes = useStyles();
     const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState(false);
 
     const handleSubmit = async (evt) => {
         evt.preventDefault();
-        // TODO send code
-        onCodeSent(email);
+
+        const formatedEmail = email.trim();
+        if (formatedEmail != "") {
+            if (Validator.validateEmail(formatedEmail)) {
+                // TODO send code
+                setEmailError("");
+                onCodeSent(formatedEmail);
+            } else {
+                setEmailError("O email informado e invalido.");
+            }
+        } else {
+            setEmailError("Email e obrigatorio.");
+        }
     }
 
     return (
-        <form className={classes.form} onSubmit={handleSubmit}>
+        <form className={classes.form} onSubmit={handleSubmit} noValidate>
             <TextField
+                error={emailError != ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -34,6 +48,7 @@ export default function SendCodeForm({ onCodeSent }) {
                 autoComplete="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                helperText={emailError}
                 autoFocus
             />
 
