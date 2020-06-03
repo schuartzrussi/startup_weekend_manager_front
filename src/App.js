@@ -1,6 +1,10 @@
 import React from 'react';
 import { createMuiTheme, responsiveFontSizes, MuiThemeProvider } from '@material-ui/core/styles';
-import LoginPage from './pages/login';
+import { Switch, BrowserRouter } from 'react-router-dom';
+import SignInPage from './pages/signin';
+import HomePage from './pages/home';
+import PrivateRoute from './routes/private_route';
+import PublicRoute from './routes/public_route';
 
 
 let theme = createMuiTheme({
@@ -19,9 +23,12 @@ theme = responsiveFontSizes(theme);
 function App() {
   return (
     <MuiThemeProvider theme={theme}>
-      <div className="App"> 
-        <LoginPage />
-    </div>
+      <BrowserRouter>
+        <Switch>
+          <PublicRoute path="/sign-in" component={SignInPage} />
+          <PrivateRoute path="/" component={HomePage} />
+        </Switch>
+      </BrowserRouter>
     </MuiThemeProvider>
   );
 }

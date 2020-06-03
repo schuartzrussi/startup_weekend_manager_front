@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Logo from '../../images/logo.png';
 import Copyright from '../../components/copyright';
-import LoginForm from './login_form';
+import SignInForm from './signin_form';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,20 +30,21 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function SignIn() {
+export default function SignInPage({ history }) {
     const classes = useStyles();
     const [email, setEmail] = useState(undefined);
 
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
+            
             <div className={classes.loginContainer}>
                 <img src={Logo} className={classes.logo} />
                 <Typography component="h1" variant="h5">
                     Admin
                 </Typography>
 
-                <LoginForm />
+                <SignInForm history={history} />
             </div>
 
             <Box mt={8}>
