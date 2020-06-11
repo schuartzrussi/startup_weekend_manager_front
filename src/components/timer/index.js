@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import useInterval from '../../hooks/use_interval';
 import { Button } from '@material-ui/core';
 
 
+const useStyles = makeStyles((theme) => ({
+    container: {
+        textAlign: "center"
+    },
+
+    text: {
+        fontSize: "60px"
+    }
+}));
+
 export default function Timer({ seconds }) {
     const [isRunning, setIsRunning] = useState(false);
     const [currentTime, setCurrentTime] = useState(seconds * 1000);
+    const classes = useStyles();
 
     const start = function() {
         setIsRunning(true);
@@ -31,23 +43,24 @@ export default function Timer({ seconds }) {
 
         seconds = seconds < 10 ? `0${seconds}` : seconds
         minutes = minutes < 10 ? `0${minutes}` : minutes
-        milliseconds = milliseconds < 10 ? `00${milliseconds}` : milliseconds < 100 ? `0${milliseconds}` : milliseconds;
+        milliseconds = milliseconds < 10 ? `0${milliseconds}` : milliseconds
+        milliseconds = milliseconds.toString().substring(0, 2);
 
         return (
-            <h1>{minutes}:{seconds}.{milliseconds}</h1>
+            <div className={classes.text}>{minutes}:{seconds}:{milliseconds}</div>
         )
     }
 
     useInterval(() => {
-        if (currentTime <= 0 || currentTime - 10 <= 0) {
+        if (currentTime <= 0 || currentTime - 20 <= 0) {
             onEnd()
         } else {
-            setCurrentTime(currentTime - 10)
+            setCurrentTime(currentTime - 20)
         }
-    }, isRunning ? 10 : null);
+    }, isRunning ? 20 : null);
 
     return (
-        <div>
+        <div className={classes.container}>
             {renderTimer()}
 
             {isRunning ?
