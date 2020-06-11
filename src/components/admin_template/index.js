@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from "react-router-dom";
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
@@ -65,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
 
     logo: {
         height: "60px",
+        cursor: "pointer"
     },
 
     content: {
@@ -76,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AdminTemplate({ title, window, routeProps, Component }) {
     const theme = useTheme();
+    const history = useHistory();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const classes = useStyles();
 
@@ -83,30 +86,43 @@ export default function AdminTemplate({ title, window, routeProps, Component }) 
         setMobileOpen(!mobileOpen);
     };
 
+    const navigate = (page) => {
+        history.push(page);
+
+        if (mobileOpen) {
+            handleDrawerToggle()
+        }
+    }
+
     const drawer = (
         <div>
             <div className={classes.toolbar, classes.logo_container}>
-                <img src={Logo} alt="logo" className={classes.logo} />
+                <img 
+                    src={Logo} 
+                    alt="logo" 
+                    className={classes.logo} 
+                    onClick={() => navigate("/admin")}
+                />
             </div>
 
             <Divider />
             <List>
-                <ListItem button key="home">
+                <ListItem button key="home" onClick={() => navigate("/admin")}>
                     <ListItemIcon><HomeTwoToneIcon /></ListItemIcon>
                     <ListItemText primary="Home" />
                 </ListItem>
 
-                <ListItem button key="pits">
+                <ListItem button key="pits" onClick={() => navigate("/admin/pits")}>
                     <ListItemIcon><EmojiObjectsTwoToneIcon /></ListItemIcon>
                     <ListItemText primary="Pits" />
                 </ListItem>
 
-                <ListItem button key="users">
+                <ListItem button key="users" onClick={() => navigate("/admin/usuarios")}>
                     <ListItemIcon><PersonOutlineTwoToneIcon /></ListItemIcon>
                     <ListItemText primary="Usuarios" />
                 </ListItem>
 
-                <ListItem button key="teams">
+                <ListItem button key="teams" onClick={() => navigate("/admin/times")}>
                     <ListItemIcon><GroupTwoToneIcon /></ListItemIcon>
                     <ListItemText primary="Times" />
                 </ListItem>

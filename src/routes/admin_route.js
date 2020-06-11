@@ -31,7 +31,7 @@ const AdminRoute = ({ component: Component, title, ...rest }) => {
                         Component={Component} 
                     />
                 ) : (
-                    <Redirect to="/sign-in" />
+                    <Redirect to="/entrar" />
                 );
             }}
         />

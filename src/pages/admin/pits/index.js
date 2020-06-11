@@ -2,11 +2,11 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
 
-export default function AdminHomePage() {
+export default function AdminPitsPage() {
     return (
         <div>
              <Typography>
-                Home
+                Pits
             </Typography>
         </div>
     )

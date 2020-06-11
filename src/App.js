@@ -6,6 +6,9 @@ import PublicRoute from './routes/public_route';
 import SignInPage from './pages/signin';
 import NotFoundPage from './pages/not_found';
 import AdminHomePage from './pages/admin/home';
+import AdminPitsPage from './pages/admin/pits';
+import AdminUsersPage from './pages/admin/users';
+import AdminTeamsPage from './pages/admin/teams';
 
 
 let theme = createMuiTheme({
@@ -26,8 +29,13 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
         <Switch>
-          <PublicRoute path="/sign-in" component={SignInPage} />
+          <PublicRoute path="/entrar" component={SignInPage} />
+        
+          <AdminRoute path="/admin/pits" title="Pits" component={AdminPitsPage} />
+          <AdminRoute path="/admin/usuarios" title="Usuarios" component={AdminUsersPage} />
+          <AdminRoute path="/admin/times" title="Times" component={AdminTeamsPage} />
           <AdminRoute path="/admin" title="Home" component={AdminHomePage} />
+          
           <Route component={NotFoundPage} />
         </Switch>
       </BrowserRouter>
