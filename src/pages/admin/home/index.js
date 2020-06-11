@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-export default function HomePage() {
+export default function AdminHomePage() {
     return (
         <h1>Home</h1>
     )

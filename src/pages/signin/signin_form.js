@@ -47,7 +47,7 @@ export default function SignInForm({ history }) {
                 visible={loadingVisible}
             />
 
-            {email != undefined ?
+            {email !== undefined ?
                 <VerifyCodeForm 
                     email={email}
                     onCodeSent={onCodeSent}

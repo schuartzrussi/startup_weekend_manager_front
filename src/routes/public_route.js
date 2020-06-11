@@ -11,7 +11,7 @@ const PublicRoute = ({ component: Component, ...rest }) => {
             {...rest}
             render={routeProps => {
                 return auth.data ? (
-                    <Redirect to="/" />
+                    <Redirect to="/admin" />
                 ) : (
                     <Component {...routeProps} />
                 );

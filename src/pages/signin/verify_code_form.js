@@ -38,13 +38,13 @@ export default function VerifyCodeForm({
         evt.preventDefault();
 
         const formatedCode = code.trim();
-        if (formatedCode != "") {
+        if (formatedCode !== "") {
             changeLoadingState(true);
             const response = await verifyOTP(formatedCode);
             changeLoadingState(false);
             let valid = false;
 
-            if (response != null && response.status == 200) {
+            if (response !== null && response.status === 200) {
                 valid = true;
                 const headers = response.headers;
                 setAuthData(headers['x-swm-authorization'])
@@ -52,7 +52,7 @@ export default function VerifyCodeForm({
 
             if (valid) {
                 setCodeError("");
-                history.replace('/');
+                history.replace('/admin');
             } else {
                 setCodeError("Codigo invalido.")
             }
@@ -66,7 +66,7 @@ export default function VerifyCodeForm({
         const respone = await sendOTP(email);
         changeLoadingState(false);
 
-        if (respone != null && respone.status == 200) {
+        if (respone !== null && respone.status === 200) {
             onCodeSent(email);
 
             showMessage(
@@ -87,7 +87,7 @@ export default function VerifyCodeForm({
         <div>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
                 <TextField
-                    error={codeError != ""}
+                    error={codeError !== ""}
                     variant="outlined"
                     margin="normal"
                     required

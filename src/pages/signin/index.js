@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     logo: {
         height: "80px",
     },
+    
     form: {
         width: '100%',
     }
@@ -32,14 +33,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignInPage({ history }) {
     const classes = useStyles();
-    const [email, setEmail] = useState(undefined);
 
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             
             <div className={classes.loginContainer}>
-                <img src={Logo} className={classes.logo} />
+                <img src={Logo} alt="logo" className={classes.logo} />
                 <Typography component="h1" variant="h5">
                     Admin
                 </Typography>

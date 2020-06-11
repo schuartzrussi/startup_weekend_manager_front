@@ -13,7 +13,8 @@ const AuthProvider = ({ children }) => {
     setAuth({data: {
       id: decoded["user"]["oid"],
       name: decoded["user"]["name"],
-      email: decoded["user"]["email"]
+      email: decoded["user"]["email"],
+      admin: true
     }});
   };
 

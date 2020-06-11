@@ -22,13 +22,13 @@ export default function SendCodeForm({ onCodeSent, showMessage, changeLoadingSta
         evt.preventDefault();
 
         const formatedEmail = email.trim();
-        if (formatedEmail != "") {
+        if (formatedEmail !== "") {
             if (Validator.validateEmail(formatedEmail)) {
                 changeLoadingState(true);
                 const respone = await sendOTP(formatedEmail);
                 changeLoadingState(false);
 
-                if (respone != null && respone.status == 200) {
+                if (respone != null && respone.status === 200) {
                     setEmailError("");
                     showMessage(
                         "Codigo enviado com sucesso", 
@@ -55,7 +55,7 @@ export default function SendCodeForm({ onCodeSent, showMessage, changeLoadingSta
         <div>
             <form className={classes.form} onSubmit={handleSubmit} noValidate>
                 <TextField
-                    error={emailError != ""}
+                    error={emailError !== ""}
                     variant="outlined"
                     margin="normal"
                     required
