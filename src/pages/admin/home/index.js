@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import ConfirmationDialog from '../../../components/confirmation_dialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,10 +42,11 @@ function getSteps() {
 
 export default function AdminHomePage() {
     const classes = useStyles();
-    const [activeStep, setActiveStep] = React.useState(0);
+    const [activeStep, setActiveStep] = useState(0);
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const steps = getSteps();
 
-    const handleNext = () => {
+    const advanceStep = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
@@ -74,9 +76,22 @@ export default function AdminHomePage() {
                 )
         }
     }
-
     return (
         <div className={classes.root}>
+            <ConfirmationDialog
+                open={confirmationDialogOpen}
+                message={activeStep === steps.length - 1 ?
+                    'Deseja realmente finalizar o evento? Esta operacao nao podera ser desfeita.' 
+                    : 
+                    'Deseja realmente avancar a fase? Esta operacao nao podera ser desfeita.'
+                }
+                on_accept={() => {
+                    advanceStep();
+                    setConfirmationDialogOpen(false);
+                }}
+                on_decline={() => setConfirmationDialogOpen(false)}
+            />
+            
             <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((label, index) => (
                     <Step key={label}>
@@ -87,7 +102,7 @@ export default function AdminHomePage() {
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    onClick={handleNext}
+                                    onClick={() => setConfirmationDialogOpen(true)}
                                     className={classes.button}>
                                     {activeStep === steps.length - 1 ?
                                         'Finalizar Evento' : 'Avancar'
