@@ -12,6 +12,7 @@ export async function sendOTP(email) {
             email
         });
     } catch (error) {
+        console.log(error);
         return null;
     }
 }
@@ -25,6 +26,28 @@ export async function verifyOTP(code) {
         const response = await api.post('/PRD/v1/otp/confirm', body);
         return response;
     } catch (error) {
+        console.log(error);
         return null;
     } 
+}
+
+export async function getUsers() {
+    try {
+        const response = await api.get("/PRD/v1/user");
+        return response;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+export async function createPitch(name, oid_user) {
+    try {
+        const body = {name, oid_user}
+        const response = await api.post('/PRD/v1/pitch', body);
+        return response;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
 }

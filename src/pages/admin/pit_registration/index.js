@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,26 +13,18 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { getUsers, createPitch } from '../../../services/api';
 import Logo from '../../../images/logo.png';
 import Copyright from '../../../components/copyright';
 import Timer from '../../../components/timer';
+import Loading from '../../../components/loading';
+import Message from '../../../components/message'; 
 
 
 const DialogTransition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-
-const users = [
-    { "name": "Ruan Schuartz Russi" },
-    { "name": "Ariel Adonai" },
-    { "name": "Jardel Angelo" },
-    { "name": "Paula Socorro" },
-    { "name": "Crislaine Recriski" },
-    { "name": "Paola Rampelloti" },
-    { "name": "Sarah Cadori" },
-    { "name": "Viviane Camargo" },
-]
 
 const useStyles = makeStyles((theme) => ({
     timerContainer: {
@@ -68,10 +60,100 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AdminPitRegistrationPage() {
     const classes = useStyles();
+    const [users, setUsers] = useState([]);
+    const [pitchDescription, setPitchDescription] = useState(undefined);
+    const [selectedUser, setSelectedUser] = useState(undefined);
     const [openDialog, setOpenDialog] = useState(false);
+    const [loadingVisible, setLoadingVisible] = useState(false);
+    const [message, setMessage] = useState({text: null, severity: null, duration: null});
+    const [messageVisible, setMessageVisible] = useState(false);
+
+    const showMessage = (text, severity, duration) => {
+        setMessage({
+            text: text,
+            duration: duration, 
+            severity: severity
+        })
+        setMessageVisible(true);
+    }
+
+    const handleSubmit = async (evt) => {
+        evt.preventDefault();
+        
+        if (validatePitchForm()) {
+            setLoadingVisible(true);
+            const response = await createPitch(pitchDescription, selectedUser.oid)
+
+            setLoadingVisible(false);
+            if (response != null && response.status == 201) {
+                clearPitchData();
+                setOpenDialog(false);
+                showMessage(
+                    "Pitch cadastrado com sucesso!", 
+                    "success", 
+                    4000
+                )
+            } else {
+                showMessage(
+                    "Ocorreu um erro. Tente novamente!", 
+                    "error", 
+                    4000
+                )
+            }
+        }
+    }
+
+    const validatePitchForm = () => {
+        if (pitchDescription === undefined ||
+            pitchDescription === null ||
+            pitchDescription.trim() === "") {
+                return false;
+        }
+
+        if (selectedUser === undefined ||
+            selectedUser === null) {
+                return false;
+        }
+        return true;
+    }
+
+    const clearPitchData = () => {
+        setPitchDescription(undefined);
+        setSelectedUser(undefined);
+    }
+
+    useEffect(() => {
+        async function loadUsers() {
+            const response = await getUsers();
+            if (response.status === 200) {
+                setUsers(response.data.items)
+            } else {
+                // TODO tratar error
+            }
+        }
+
+        loadUsers();
+    }, [])
 
     return (
         <div>
+            <Message 
+                visible={messageVisible}
+                severity={message.severity}
+                duration={message.duration}
+                message={message.text}
+                handleClose={(event, reason) => {
+                    if (reason === 'clickaway') {
+                        return;
+                    }
+                    setMessageVisible(false);
+                }}
+            />
+
+            <Loading
+                visible={loadingVisible}
+            />
+
             <Dialog
                 open={openDialog}
                 aria-labelledby="form-dialog-title"
@@ -79,36 +161,49 @@ export default function AdminPitRegistrationPage() {
                 maxWidth="md">
 
                 <DialogTitle id="form-dialog-title">Cadastrar Pit</DialogTitle>
-                <DialogContent dividers>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="description"
-                        label="Descrição"
-                        type="text"
-                        fullWidth
-                    />
+                
+                <form noValidate onSubmit={handleSubmit}>
+                    <DialogContent dividers>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="description"
+                            label="Descrição"
+                            type="text"
+                            onChange={e => setPitchDescription(e.target.value)}
+                            fullWidth
+                        />
 
-                    <Autocomplete
-                        id="user"
-                        options={users}
-                        className={classes.userSelection}
-                        getOptionLabel={(option) => option.name}
-                        style={{ width: 300 }}
-                        renderInput={(params) => 
-                            <TextField {...params} label="Usuário" variant="outlined" />}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        color="primary"
-                        onClick={() => setOpenDialog(false)}>
-                        Cancelar
-                    </Button>
-                    <Button color="primary">
-                        Salvar
-                    </Button>
-                </DialogActions>
+                        <Autocomplete
+                            id="user"
+                            options={users}
+                            className={classes.userSelection}
+                            getOptionLabel={(option) => option.name}
+                            style={{ width: 300 }}
+                            onChange={(event, value) => {
+                                setSelectedUser(value)
+                            }}
+                            renderInput={(params) => 
+                                <TextField {...params} label="Usuário" variant="outlined" />}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            color="primary"
+                            onClick={() => {
+                                setOpenDialog(false);
+                                clearPitchData();
+                            }}>
+                            Cancelar
+                        </Button>
+                        <Button 
+                            color="primary"
+                            disabled={!validatePitchForm()}
+                            type="submit">
+                            Salvar
+                        </Button>
+                    </DialogActions>
+                </form>
             </Dialog>
 
             <Container component="main" maxWidth="xs">
