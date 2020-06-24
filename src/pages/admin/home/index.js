@@ -52,14 +52,6 @@ export default function AdminHomePage() {
         setLoadingVisible(false);
     };
 
-    const getPitPresentationStep = function() {
-        return (
-            <Link href="/admin/pits/cadastrar" target="_blank">
-                Abrir Cadastro de Pits
-            </Link>
-        )
-    }
-
     const getPitVotingStep = () => {
         return (
             <Typography h3>10 votos restantes.</Typography>
@@ -70,17 +62,34 @@ export default function AdminHomePage() {
         switch (name) {
             case "NOT_STARTED":
             case "OPENING":
+            case "WORK_HARD":
+            case "JUDGES_VOTE":
                return
+
             case "PITCH_TIME":
-                return getPitPresentationStep();
+                return (
+                    <Link href="/admin/pits/cadastrar" target="_blank">
+                        Abrir Cadastro de Pits
+                    </Link>
+                )
+                
             case "VOTE_PITCH":
                 return getPitVotingStep();
+            
+            case "ASSEMBLING_TEAMS":
+                return (
+                    <Link href="/admin/pits/cadastrar" target="_blank">
+                        Mostrar Equipes
+                    </Link>
+                )
+
             case "FINISHED":
                 return (
                     <Paper square elevation={0} className={classes.endContainer}>
                         <Typography>Evento Finalizado</Typography>
                     </Paper>
                 )
+                
             default:
                 return (
                     <h4>Step nao implementado</h4>
