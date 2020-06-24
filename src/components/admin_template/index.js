@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useHistory } from "react-router-dom";
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -20,6 +20,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Logo from '../../images/logo.png';
+import { logout } from '../../services/api';
+import { authContext } from '../../contexts/AuthContext';
 
 
 const drawerWidth = 240;
@@ -81,6 +83,7 @@ export default function AdminTemplate({ title, window, routeProps, Component }) 
     const history = useHistory();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const classes = useStyles();
+    const { setAuthData } = useContext(authContext);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -149,7 +152,21 @@ export default function AdminTemplate({ title, window, routeProps, Component }) 
                     <Typography variant="h6" className={classes.title}>
                         {title}
                     </Typography>
-                    <Button color="inherit">Sair</Button>
+                    <Button 
+                        color="inherit"
+                        onClick={() => {
+                            const asyncLogout = async function() {
+                                const response = await logout();
+                                if (response.status == 200) {
+                                    setAuthData(null);
+                                } else {
+                                    // TODO tratar erro
+                                }
+                                
+                            }
+
+                            asyncLogout();
+                        }}>Sair</Button>
                 </Toolbar>
             </AppBar>
 

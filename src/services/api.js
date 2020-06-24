@@ -61,3 +61,37 @@ export async function getPitchs() {
 		return null
 	}
 }
+
+export async function getPhases() {
+	try {
+		const response = await api.get('/PRD/v1/phase')
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
+export async function logout() {
+	try {
+		const response = await api.post('/PRD/v1/logout');
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
+export async function setPhase(phase) {
+	try {
+		const body = {
+			"phase": phase
+		}
+
+		const response = await api.post('/PRD/v1/phase', body);
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}

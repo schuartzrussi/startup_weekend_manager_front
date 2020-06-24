@@ -8,14 +8,18 @@ const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({ loading: true, data: null });
 
   const setAuthData = (jwt) => {
-    const decoded = decodeJWT(jwt);
+    if (jwt) {
+      const decoded = decodeJWT(jwt);
 
-    setAuth({data: {
-      id: decoded["user"]["oid"],
-      name: decoded["user"]["name"],
-      email: decoded["user"]["email"],
-      admin: true
-    }});
+      setAuth({data: {
+        id: decoded["user"]["oid"],
+        name: decoded["user"]["name"],
+        email: decoded["user"]["email"],
+        admin: true
+      }});
+    } else {
+      setAuth({loading: true, data: null});
+    }
   };
 
   useEffect(() => {
@@ -23,7 +27,11 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem('authData', JSON.stringify(auth.data));
+    if (auth.data != null) {
+      window.localStorage.setItem('authData', JSON.stringify(auth.data));
+    } else {
+      window.localStorage.removeItem('authData');
+    }
   }, [auth.data]);
 
   return (
