@@ -34,4 +34,4 @@ const UserRoute = ({ component: Component, step, ...rest }) => {
     );
 };
 
-export default AdminPresentationRoute;
+export default UserRoute;
