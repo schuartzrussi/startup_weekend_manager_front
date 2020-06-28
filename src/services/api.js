@@ -62,6 +62,16 @@ export async function getPitchs() {
 	}
 }
 
+export async function getTeams() {
+	try {
+		const response = await api.get('/PRD/v1/team')
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
 export async function getPhases() {
 	try {
 		const response = await api.get('/PRD/v1/phase')

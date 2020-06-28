@@ -24,14 +24,15 @@ const AdminRoute = ({ component: Component, title, ...rest }) => {
         <Route
             {...rest}
             render={routeProps => {
-                return auth.data ? (
+                return auth.data && auth.data.admin ? (
                     <AdminTemplate 
                         title={title} 
                         routeProps={routeProps} 
                         Component={Component} 
                     />
-                ) : (
-                    <Redirect to="/entrar" />
+                ) : auth.data ? 
+                    (<Redirect to="/" />) : 
+                    (<Redirect to="/entrar" />
                 );
             }}
         />

@@ -4,7 +4,7 @@ import { authContext } from '../contexts/AuthContext';
 import Loading from '../components/loading';
 
 
-const AdminPresentationRoute = ({ component: Component, step, ...rest }) => {
+const UserRoute = ({ component: Component, step, ...rest }) => {
     const { auth } = useContext(authContext);
     const { loading } = auth;
 
@@ -23,10 +23,10 @@ const AdminPresentationRoute = ({ component: Component, step, ...rest }) => {
         <Route
             {...rest}
             render={routeProps => {
-                return auth.data && auth.data.admin ? (
+                return auth.data && !auth.data.admin ? (
                     <Component {...routeProps} />
                 ) : auth.data ? 
-                    (<Redirect to="/" />) : 
+                    (<Redirect to="/admin" />) : 
                     (<Redirect to="/entrar" />
                 );
             }}

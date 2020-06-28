@@ -10,15 +10,14 @@ const AuthProvider = ({ children }) => {
   const setAuthData = (jwt) => {
     if (jwt) {
       const decoded = decodeJWT(jwt);
-
       setAuth({data: {
         id: decoded["user"]["oid"],
         name: decoded["user"]["name"],
         email: decoded["user"]["email"],
-        admin: true
+        admin: decoded["user"]["type"] === "ADMIN"
       }});
     } else {
-      setAuth({loading: true, data: null});
+      setAuth({loading: false, data: null});
     }
   };
 
