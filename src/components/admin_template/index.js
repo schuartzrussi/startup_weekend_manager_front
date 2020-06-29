@@ -157,12 +157,7 @@ export default function AdminTemplate({ title, window, routeProps, Component }) 
                         onClick={() => {
                             const asyncLogout = async function() {
                                 const response = await logout();
-                                if (response.status == 200) {
-                                    setAuthData(null);
-                                } else {
-                                    // TODO tratar erro
-                                }
-                                
+                                setAuthData(null);
                             }
 
                             asyncLogout();

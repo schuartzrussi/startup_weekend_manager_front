@@ -115,3 +115,13 @@ export async function setPhase(phase) {
 		return null
 	}
 }
+
+export async function votePitch(pitch) {
+	try {
+		const response = await api.post(`/PRD/v1/pitch/${pitch.oid}/vote`);
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	} 
+}

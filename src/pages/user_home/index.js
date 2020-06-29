@@ -17,6 +17,7 @@ import { logout } from '../../services/api';
 import { authContext } from '../../contexts/AuthContext';
 import Timer from '../../components/timer';
 import Loading from '../../components/loading';
+import ConfirmationDialog from '../../components/confirmation_dialog';
 import useInterval from '../../hooks/use_interval';
 import { getCurrentPhase, getPitchs } from '../../services/api';
 
@@ -79,6 +80,9 @@ export default function UserHomePage() {
     const [pitchsSelected, setPitchsSelected] = useState([]);
     const [title, setTitle] = useState("Startup Weekend");
     const [availableVotes, setAvailableVotes] = useState(5);
+
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+    const [confirmationDialogText, setConfirmationDialogText] = useState(null);
 
     useEffect(() => {
         const getPhase = async function() {
@@ -174,6 +178,14 @@ export default function UserHomePage() {
             setPitchsSelected(selecteds);
         }
     };
+
+    const onConfirm = function() {
+        if (currentPhase === "VOTE_PITCH") {
+            for (let i = 0; i < pitchsSelected.length; i++) {
+                
+            }
+        }
+    }
 
     const enabledVoteItem = function(item) {
         if (availableVotes === 0) {
@@ -276,11 +288,7 @@ export default function UserHomePage() {
                             onClick={() => {
                                 const asyncLogout = async function() {
                                     const response = await logout();
-                                    if (response.status == 200) {
-                                        setAuthData(null);
-                                    } else {
-                                        // TODO tratar erro
-                                    }
+                                    setAuthData(null);
                                 }
                                 asyncLogout();
                         }}>Confirmar</Button>
@@ -291,16 +299,18 @@ export default function UserHomePage() {
                         onClick={() => {
                             const asyncLogout = async function() {
                                 const response = await logout();
-                                if (response.status == 200) {
-                                    setAuthData(null);
-                                } else {
-                                    // TODO tratar erro
-                                }
+                                setAuthData(null);
                             }
                             asyncLogout();
                         }}>Sair</Button>
                 </Toolbar>
             </AppBar>
+
+            <ConfirmationDialog
+                open={confirmationDialogOpen}
+                message={confirmationDialogText}
+                on_accept={onConfirm}
+            />
 
             <Loading
                 visible={loadingVisible}
