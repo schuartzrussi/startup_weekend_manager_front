@@ -82,6 +82,16 @@ export async function getPhases() {
 	}
 }
 
+export async function getCurrentPhase() {
+	try {
+		const response = await api.get('/PRD/v1/phase/current')
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
 export async function logout() {
 	try {
 		const response = await api.post('/PRD/v1/logout');

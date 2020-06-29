@@ -35,14 +35,14 @@ function App() {
         <Switch>
           <PublicRoute path="/entrar" component={SignInPage} />
 
-          <UserRoute path="/" component={UserHomePage} />
-
           <AdminPresentationRoute path="/admin/pits/cadastrar" component={AdminPitRegistrationPage} />
           <AdminRoute path="/admin/pits" title="Pits" component={AdminPitsPage} />
           <AdminRoute path="/admin/usuarios" title="Usuarios" component={AdminUsersPage} />
           <AdminRoute path="/admin/times" title="Times" component={AdminTeamsPage} />
           <AdminRoute path="/admin" title="Home" component={AdminHomePage} />
           
+          <UserRoute path="/" component={UserHomePage} />
+
           <Route component={NotFoundPage} />
         </Switch>
       </BrowserRouter>
