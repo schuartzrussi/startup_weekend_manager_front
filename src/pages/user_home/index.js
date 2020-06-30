@@ -11,6 +11,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Add from '@material-ui/icons/Add';
@@ -80,6 +87,10 @@ const useStyles = makeStyles((theme) => ({
     voteList: {
         width: '100%',
     },
+
+    teamDiv: {
+        textAlign: 'center',
+    }
 }));
 
 export default function UserHomePage() {
@@ -110,7 +121,7 @@ export default function UserHomePage() {
         return 0;
     }
 
-    const isTeamLeader = function(user) {
+    const isTeamLeader = function (user) {
         if (user == null || user["team"] == null) {
             return false;
         }
@@ -118,7 +129,7 @@ export default function UserHomePage() {
         return user["team"]["oid_leader"] === user["oid"];
     }
 
-    const hasTeam = function(user) {
+    const hasTeam = function (user) {
         if (user == null || user["team"] == null) {
             return false;
         }
@@ -392,7 +403,7 @@ export default function UserHomePage() {
         return true;
     }
 
-    const onSelectTeam = async function(team) {
+    const onSelectTeam = async function (team) {
         setLoadingVisible(true);
         let selecteds = window.localStorage.getItem('teamsSelected')
 
@@ -400,7 +411,7 @@ export default function UserHomePage() {
         if (response.status != 200) {
             // TODO tratar error
         }
-        
+
         if (selecteds != null) {
             selecteds = JSON.parse(selecteds);
             selecteds.push(team);
@@ -526,7 +537,7 @@ export default function UserHomePage() {
                                                         checked={isRequestSelected(value.oid)}
                                                     />
                                                 </ListItemIcon>
-                                                
+
                                                 <ListItemText id={value.oid} primary={value.oid_user} />
                                             </ListItem>
                                             <Divider />
@@ -569,8 +580,8 @@ export default function UserHomePage() {
                                             <ListItemText id={value.oid} primary={value.name} />
 
                                             <ListItemSecondaryAction>
-                                                <IconButton 
-                                                    edge="end" 
+                                                <IconButton
+                                                    edge="end"
                                                     aria-label="comments"
                                                     onClick={() => {
                                                         onSelectTeam(value)
@@ -585,6 +596,30 @@ export default function UserHomePage() {
                             })}
                         </List>
                     )
+
+                case "WORK_HARD":
+                    return (
+                        <div className={classes.teamDiv}>
+                            <Typography variant="h6">
+                                {currentUser.team.name}
+                            </Typography>
+
+                            <TableContainer component={Paper}>
+                                <Table aria-label="simple table">
+                                    <TableBody>
+                                        {currentUser.team.members.map((row) => (
+                                            <TableRow key={row}>
+                                                <TableCell component="th" scope="row">
+                                                    {row}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </div>
+                    )
+
             }
         }
     }
@@ -642,21 +677,21 @@ export default function UserHomePage() {
             <div className={classes.content}>
                 <div className={classes.toolbar} />
                 <Container component="main" maxWidth="xs">
-                    {(currentPhase != "VOTE_PITCH" && 
-                      (currentPhase != "ASSEMBLING_TEAMS" || 
-                       (!isTeamLeader(currentUser) && (hasTeam(currentUser) || teams.length === 0)) ||
-                        (isTeamLeader(currentUser) && teamsRequest.length === 0))) 
-                       && 
+                    {(currentPhase != "VOTE_PITCH" &&
+                        (currentPhase != "ASSEMBLING_TEAMS" ||
+                            (!isTeamLeader(currentUser) && (hasTeam(currentUser) || teams.length === 0)) ||
+                            (isTeamLeader(currentUser) && teamsRequest.length === 0)))
+                        &&
                         <div className={classes.homeContainer}>
                             <img src={Logo} alt="logo" className={classes.logo} />
                             {getPageContent()}
                         </div>
                     }
 
-                    {(currentPhase === "VOTE_PITCH" || 
-                      (currentPhase === "ASSEMBLING_TEAMS" &&
-                       (!isTeamLeader(currentUser) && !hasTeam(currentUser) && teams.length > 0) || 
-                       (isTeamLeader(currentUser) && teamsRequest.length > 0)))
+                    {(currentPhase === "VOTE_PITCH" ||
+                        (currentPhase === "ASSEMBLING_TEAMS" &&
+                            (!isTeamLeader(currentUser) && !hasTeam(currentUser) && teams.length > 0) ||
+                            (isTeamLeader(currentUser) && teamsRequest.length > 0)))
                         && getPageContent()}
                 </Container>
             </div>
