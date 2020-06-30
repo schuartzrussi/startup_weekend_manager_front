@@ -19,7 +19,11 @@ import Timer from '../../components/timer';
 import Loading from '../../components/loading';
 import ConfirmationDialog from '../../components/confirmation_dialog';
 import useInterval from '../../hooks/use_interval';
-import { getCurrentPhase, getPitchs } from '../../services/api';
+import { 
+    getCurrentPhase, 
+    getPitchs,
+    votePitch } 
+from '../../services/api';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -77,12 +81,25 @@ export default function UserHomePage() {
     const [loadingVisible, setLoadingVisible] = useState(false);
     const [timerRunning, setTimerRunning] = useState(false);
     const [pitchs, setPitchs] = useState(null);
+    const [teams, setTeams] = useState(null);
     const [pitchsSelected, setPitchsSelected] = useState([]);
     const [title, setTitle] = useState("Startup Weekend");
     const [availableVotes, setAvailableVotes] = useState(5);
+    const [votesSent, setVotesSent] = useState(false);
 
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const [confirmationDialogText, setConfirmationDialogText] = useState(null);
+
+
+    const loadPitchsSelecteds = function() {
+        const selecteds = window.localStorage.getItem('pitchSelecteds');
+        if (selecteds != null) {
+            const parsed = JSON.parse(selecteds)
+            setPitchsSelected(parsed);
+            return parsed.length;
+        }
+        return 0;
+    }
 
     useEffect(() => {
         const getPhase = async function() {
@@ -93,11 +110,18 @@ export default function UserHomePage() {
 
                 if (phase === "VOTE_PITCH") {
                     response = await getPitchs();
-                    setTitle("Votos disponiveis: " + availableVotes)
+                    const qtdVotes = loadPitchsSelecteds();
+                    setAvailableVotes(5 - qtdVotes);
+                    setTitle("Votos disponiveis: " + (5 - qtdVotes))
                     if (response != null && response.status === 200) {
                         setPitchs(response.data.items)
                     } else {
-                        // TODO tratar error
+                        // TODO tratar erro
+                    }
+
+                    const alreadyVote = window.localStorage.getItem('votesSent');
+                    if (alreadyVote != null && alreadyVote === 'true') {
+                        setVotesSent(true);
                     }
                 }
 
@@ -118,7 +142,6 @@ export default function UserHomePage() {
             if (response != null && response.status === 200) {
                 const phase = response.data.name;
                 if (phase != currentPhase) {
-                   
                     if (phase === "VOTE_PITCH" && pitchs == null) {
                         setLoadingVisible(true);
                         response = await getPitchs();
@@ -127,8 +150,17 @@ export default function UserHomePage() {
                         } else {
                             // TODO tratar error
                         }
-                        setTitle("Votos disponiveis: " + availableVotes)
+
+                        const qtdVotes = loadPitchsSelecteds();
+                        setAvailableVotes(5 - qtdVotes);
+                        setTitle("Votos disponiveis: " + (5 - qtdVotes))
                         setLoadingVisible(false);
+
+                        const alreadyVote = window.localStorage.getItem('votesSent');
+                        console.log(alreadyVote)
+                        if (alreadyVote != null && alreadyVote === 'true') {
+                            setVotesSent(true);
+                        }
                     } else {
                         if (title != "Startup Weekend") {
                             setTitle("Startup Weekend")
@@ -176,18 +208,32 @@ export default function UserHomePage() {
             }
             
             setPitchsSelected(selecteds);
+            window.localStorage.setItem('pitchSelecteds', JSON.stringify(selecteds));
         }
     };
 
-    const onConfirm = function() {
+    const onConfirm = async function() {
         if (currentPhase === "VOTE_PITCH") {
+            setLoadingVisible(true);
             for (let i = 0; i < pitchsSelected.length; i++) {
-                
+                const response = await votePitch(pitchsSelected[i]);
+                console.log(response)
+                if (response == null || response.status != 200) {
+                    // TODO tratar error
+                }
             }
+            window.localStorage.setItem('votesSent', true);
+            setVotesSent(true);
+            setConfirmationDialogOpen(false);
+            setLoadingVisible(false);
         }
     }
 
     const enabledVoteItem = function(item) {
+        if (votesSent) {
+            return false;
+        }
+
         if (availableVotes === 0) {
             return isPitchSelected(item.oid)
         }
@@ -270,6 +316,9 @@ export default function UserHomePage() {
                             })}
                         </List>
                     )
+
+                case "ASSEMBLING_TEAMS":
+                    return <h1>Ta indo</h1>
             }
         }
     }
@@ -283,14 +332,11 @@ export default function UserHomePage() {
                         {title}
                     </Typography>
 
-                    {currentPhase === "VOTE_PITCH" && availableVotes === 0 && (
+                    {currentPhase === "VOTE_PITCH" && availableVotes === 0 && !votesSent && (
                         <Button 
                             onClick={() => {
-                                const asyncLogout = async function() {
-                                    const response = await logout();
-                                    setAuthData(null);
-                                }
-                                asyncLogout();
+                                setConfirmationDialogOpen(true);
+                                setConfirmationDialogText("Deseja enviar os votos? Essa operacao nao podera ser desfeita.")
                         }}>Confirmar</Button>
                     )}
 
@@ -300,6 +346,8 @@ export default function UserHomePage() {
                             const asyncLogout = async function() {
                                 const response = await logout();
                                 setAuthData(null);
+                                window.localStorage.removeItem('pitchSelecteds');
+                                window.localStorage.removeItem('votesSent');
                             }
                             asyncLogout();
                         }}>Sair</Button>
@@ -310,6 +358,7 @@ export default function UserHomePage() {
                 open={confirmationDialogOpen}
                 message={confirmationDialogText}
                 on_accept={onConfirm}
+                on_decline={() => setConfirmationDialogOpen(false)}
             />
 
             <Loading
@@ -319,7 +368,7 @@ export default function UserHomePage() {
             <div className={classes.content}>
                 <div className={classes.toolbar} />
                 <Container component="main" maxWidth="xs">
-                    {currentPhase != "VOTE_PITCH" &&
+                    {(currentPhase != "VOTE_PITCH") &&
                         <div className={classes.homeContainer}>
                             <img src={Logo} alt="logo" className={classes.logo} />     
                             {getPageContent()}
