@@ -57,7 +57,6 @@ export default function AdminPitsPage() {
 						{pitchs.map((item) => (
 							<TableRow key={item.oid}>
 								<TableCell>{item.name}</TableCell>
-								<TableCell>TODO Ariel</TableCell>
 							</TableRow>
 						))}		
 					</TableBody>

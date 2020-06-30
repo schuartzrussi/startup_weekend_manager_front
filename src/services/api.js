@@ -125,3 +125,47 @@ export async function votePitch(pitch) {
 		return null
 	} 
 }
+
+export async function getCurrentUser() {
+	try {
+		const response = await api.get("/PRD/v1/user/current");
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
+export async function createTeamRequest(oid_team) {
+	try {
+		const body = {
+			oid_team
+		}
+
+		const response = await api.post('/PRD/v1/team/request', body);
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
+export async function getTeamRequests() {
+	try {
+		const response = await api.get('/PRD/v1/team/request')
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
+
+export async function confirmRequest(request_oid) {
+	try {
+		const response = await api.post(`/PRD/v1/team/request/${request_oid}/confirm`);
+		return response;
+	} catch (error) {
+		console.log(error)
+		return null
+	}
+}
